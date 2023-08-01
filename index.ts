@@ -9,12 +9,11 @@ const openAi = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const TEAM_NAME = "Usability Testing Pod";
-const TEAM_URL =
-  "https://www.notion.so/Usability-Testing-Pod-f951fe8684a24cf695ff99ec21df5c72?pvs=21";
-const TEAM_ID = "caafcf63-fd9e-4165-bc51-87af11fe1a78";
-
-const FILTER_PROJECTS = ["Maintenance June"];
+const TEAM_NAME = process.env.TEAM_NAME;
+const TEAM_URL = process.env.TEAM_URL;
+const TEAM_ID = process.env.TEAM_ID;
+const EXCLUDE_PROJECT_NAMES =
+  process.env.EXCLUDE_PROJECT_NAMES?.split(",") || [];
 
 async function ai(prompt: string) {
   try {
@@ -73,7 +72,7 @@ async function getProjects() {
   const { nodes } = await team.projects({
     filter: {
       state: { eq: "planned" },
-      name: { nin: FILTER_PROJECTS },
+      name: { nin: EXCLUDE_PROJECT_NAMES },
     },
   });
 
