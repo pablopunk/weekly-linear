@@ -10,6 +10,7 @@
 - Lists all projects of the team
 - Lists all issues planned for the current cycle
 - Lists all issues done in the past cycle
+- Lists all bugs for the past week (using Triage)
 
 ## Install deps
 
