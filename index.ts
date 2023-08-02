@@ -108,7 +108,7 @@ async function getIssueTitleAndLink(issue: Issue) {
   return `${title} ([${issue.identifier}](${issue.url}))`;
 }
 
-async function printLastCycle(projects: Project[], lastCycle: Cycle) {
+async function printLastCycleProjects(projects: Project[], lastCycle: Cycle) {
   console.log("## 📊 **Progress**");
 
   for (const project of projects) {
@@ -199,7 +199,7 @@ async function main() {
 [${TEAM_NAME}](${TEAM_URL})
 `);
 
-  await printLastCycle(projects, lastCycle);
+  await printLastCycleProjects(projects, lastCycle);
   await printOpenBugsSinceLastCycle();
 
   console.log(`
