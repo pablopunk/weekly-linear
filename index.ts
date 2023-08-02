@@ -108,7 +108,7 @@ async function getIssueTitleAndLink(issue: Issue) {
   return `${title} ([${issue.identifier}](${issue.url}))`;
 }
 
-async function printLastWeek(projects: Project[], lastCycle: Cycle) {
+async function printLastCycle(projects: Project[], lastCycle: Cycle) {
   console.log("## 📊 **Progress**");
 
   for (const project of projects) {
@@ -136,7 +136,10 @@ ${printableIssues.map((issue) => `- ${issue}`).join("\n")}
   }
 }
 
-async function printCurrentWeek(projects: Project[], currentCycle: Cycle) {
+async function printCurrentCycleProjects(
+  projects: Project[],
+  currentCycle: Cycle,
+) {
   console.log("## 📅 Next Week");
   for (const project of projects) {
     const issues = await getIssues(project, currentCycle);
@@ -175,7 +178,7 @@ async function getLastWeekBugs() {
   return nodes;
 }
 
-async function printLastWeekBugs() {
+async function printOpenBugsSinceLastCycle() {
   const issues = await getLastWeekBugs();
   const printableIssues = await Promise.all(
     issues.map((issue) => getIssueTitleAndLink(issue)),
@@ -196,8 +199,8 @@ async function main() {
 [${TEAM_NAME}](${TEAM_URL})
 `);
 
-  await printLastWeek(projects, lastCycle);
-  await printLastWeekBugs();
+  await printLastCycle(projects, lastCycle);
+  await printOpenBugsSinceLastCycle();
 
   console.log(`
 ## ⚠️  Problems
@@ -209,7 +212,7 @@ async function main() {
 - *Any challenges and issues*
 `);
 
-  await printCurrentWeek(projects, currentCycle);
+  await printCurrentCycleProjects(projects, currentCycle);
 }
 
 main();
