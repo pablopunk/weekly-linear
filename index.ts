@@ -97,7 +97,13 @@ async function getIssues(project: Project, cycle: Cycle) {
 const getSmartTitle = (issue: Issue) =>
   ai(`
   Give me a title for this Linear ticket that is about the same size (one line is preferred) but
-  it's more readable and understandable for a human. Please reply only with the generated title, no boilerplate, no chat, no "Title:".
+  it's more readable and understandable for a human. Try to make it an "action" we do, for example:
+
+  "[UI] Import callouts for errors/warnings" should be "Implement callouts for import error/warnings".
+  "Live Embed as Default release note modal" shoud be "Show Live Embed modal"
+  "UI bug on radio control in LWT builder block" should be "Fix radio control in LWT builder block"
+
+  Please reply only with the generated title, no boilerplate, no chat, no "Title:".
 
   Title: ${issue.title}
   Description: ${issue.description}
@@ -166,12 +172,37 @@ const getDateOfLastWeeksMonday = () => {
   return new Date(today.setDate(diff));
 };
 
+async function getEmojiForState(issue: Issue) {
+  const state = await issue.state;
+  switch (state?.type) {
+    case "completed":
+      return "✅";
+    case "started":
+      return "🏃";
+    case "canceled":
+      return "🚫";
+    case "triaged":
+      return "";
+    case "unstarted":
+      return "";
+    default:
+      return "";
+  }
+}
+
 async function getLastWeekBugs() {
   const { nodes } = await linearClient.issues({
     filter: {
       team: { id: { eq: TEAM_ID } },
-      triagedAt: { null: false },
       createdAt: { gt: getDateOfLastWeeksMonday() },
+      or: [
+        {
+          labels: { name: { eq: "Bug" } },
+        },
+        {
+          triagedAt: { null: false },
+        },
+      ],
     },
   });
 
@@ -180,14 +211,15 @@ async function getLastWeekBugs() {
 
 async function printOpenBugsSinceLastCycle() {
   const issues = await getLastWeekBugs();
-  const printableIssues = await Promise.all(
-    issues.map((issue) => getIssueTitleAndLink(issue)),
-  );
+  const [printableIssues, emojis] = await Promise.all([
+    Promise.all(issues.map((issue) => getIssueTitleAndLink(issue))),
+    Promise.all(issues.map((issue) => getEmojiForState(issue))),
+  ]);
 
   console.log(`
 ## 🐛 Ops, Bugs & Incidents
 
-${printableIssues.map((issue) => `- ${issue}`).join("\n")}
+${printableIssues.map((issue, i) => `- ${emojis[i]} ${issue}`).join("\n")}
 `);
 }
 
