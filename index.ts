@@ -71,7 +71,6 @@ async function getProjects() {
 
   const { nodes } = await team.projects({
     filter: {
-      state: { eq: "planned" },
       name: { nin: EXCLUDE_PROJECT_NAMES },
     },
   });
