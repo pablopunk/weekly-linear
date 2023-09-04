@@ -211,8 +211,8 @@ async function getLastWeekBugs() {
 async function printOpenBugsSinceLastCycle() {
   const issues = await getLastWeekBugs();
   const [printableIssues, emojis] = await Promise.all([
-    Promise.all(issues.map((issue) => getIssueTitleAndLink(issue))),
-    Promise.all(issues.map((issue) => getEmojiForState(issue))),
+    Promise.all(issues.map(getIssueTitleAndLink)),
+    Promise.all(issues.map(getEmojiForState)),
   ]);
 
   console.log(`
