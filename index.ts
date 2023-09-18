@@ -13,7 +13,7 @@ const TEAM_NAME = process.env.TEAM_NAME;
 const TEAM_URL = process.env.TEAM_URL;
 const TEAM_ID = process.env.TEAM_ID;
 const EXCLUDE_PROJECT_NAMES =
-  process.env.EXCLUDE_PROJECT_NAMES?.split(",") || [];
+  process.env.EXCLUDE_PROJECT_NAMES?.split(";;")?.map((p) => p.trim()) || [];
 
 async function ai(prompt: string) {
   try {
