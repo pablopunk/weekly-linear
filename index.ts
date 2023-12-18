@@ -175,11 +175,11 @@ async function getEmojiForState(issue: Issue) {
   const state = await issue.state;
   switch (state?.type) {
     case "completed":
-      return "✅";
+      return "✅ **DONE** →";
     case "started":
-      return "🏃";
+      return "🏃 **WIP** →";
     case "canceled":
-      return "🚫";
+      return "🚫 **CANCELED** →";
     case "triaged":
       return "";
     case "unstarted":
