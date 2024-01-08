@@ -68,13 +68,7 @@ async function getTeam() {
 
 async function getProjects() {
   const team = await getTeam();
-
-  const { nodes } = await team.projects({
-    filter: {
-      name: { nin: EXCLUDE_PROJECT_NAMES },
-    },
-  });
-
+  const { nodes } = await team.projects();
   return nodes;
 }
 
@@ -147,6 +141,14 @@ async function printCurrentCycleProjects(
 ) {
   console.log("## 📅 Next Week");
   for (const project of projects) {
+    if (
+      EXCLUDE_PROJECT_NAMES.some((p) =>
+        project.name.toLowerCase().includes(p.toLowerCase()),
+      )
+    ) {
+      continue;
+    }
+
     const issues = await getIssues(project, currentCycle);
 
     if (issues.length < 1) {
